@@ -1,5 +1,6 @@
 package com.programmer47.SpringbootDemo.configurations;
 
+import com.programmer47.SpringbootDemo.interceptor.LogInterceptor;
 import com.programmer47.SpringbootDemo.interceptor.LoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
-    private LoggingInterceptor logInterceptor;
+    //private LoggingInterceptor logInterceptor;
+    private LogInterceptor logInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry){

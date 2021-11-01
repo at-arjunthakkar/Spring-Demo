@@ -23,7 +23,7 @@ public class CustomHttpRequestWrapper extends HttpServletRequestWrapper {
     public CustomHttpRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         bodyInStringFormat = readInputStreamInStringFormat(request.getInputStream(), Charset.forName(request.getCharacterEncoding()));
-        logger.info("Body: {}", bodyInStringFormat);
+        //logger.info("Body: {}", bodyInStringFormat);
     }
 
 
