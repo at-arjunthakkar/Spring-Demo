@@ -1,14 +1,15 @@
 package com.programmer47.SpringbootDemo.service;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
@@ -17,9 +18,16 @@ import lombok.extern.log4j.Log4j2;
 @Log
 public class LoggingServiceImpl implements LoggingService {
 
+    @Value("${httpreq.sensetivekey}")
+    List<String> sensetiveDataKeyList = new ArrayList<>();
+    /*sensetiveDataKeyList.add("password");
+      sensetiveDataKeyList.add("salary");
+      sensetiveDataKeyList.add("employee_id");*/
     @Override
     public void logRequest(HttpServletRequest httpServletRequest, Object body) {
         StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder bodyStr = new StringBuilder();
+
         Map<String, String> parameters = buildParametersMap(httpServletRequest);
 
         stringBuilder.append("REQUEST ");
@@ -32,10 +40,33 @@ public class LoggingServiceImpl implements LoggingService {
         }
 
         if (body != null) {
-            stringBuilder.append("body=[" + body + "]");
-        }
+            bodyStr.append(body);
 
+            for (String sensetiveKey : sensetiveDataKeyList) {
+                if (bodyStr.indexOf(sensetiveKey) != -1) {
+                    removeValueOfSensetiveKey(sensetiveKey, bodyStr);
+                }
+            }
+            stringBuilder.append("body=[" + bodyStr + "]");
+        }
         log.info(stringBuilder.toString());
+    }
+
+    private void removeValueOfSensetiveKey(String sensetiveKey,StringBuilder sb) {
+
+        //TODO:AT handle case sensitive keys
+        int startIndex = sb.toString().indexOf(sensetiveKey);
+        int endIndex = sb.toString().indexOf(',',startIndex);
+        if(endIndex == -1) {
+            endIndex = sb.toString().indexOf(')', startIndex);
+            startIndex-=2;
+        }
+        else
+        {
+            endIndex+=2;
+        }
+        sb.replace(startIndex,endIndex,"");
+        log.info("key "+sensetiveKey);
     }
 
     @Override
